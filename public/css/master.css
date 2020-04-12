@@ -1,12 +1,12 @@
 /* adds some margin below the link sets  */
-.navbar .dropdown-menu div[class*="col"] {
+/* .navbar .dropdown-menu div[class*="col"] {
     margin-bottom: 1rem;
 }
 
 .navbar .dropdown-menu {
     border: none;
     background-color: #0060c8 !important;
-}
+} */
 
 /* breakpoint and up - mega dropdown styles */
 @media screen and (min-width: 992px) {
@@ -23,9 +23,9 @@
     }
 
     /* makes the dropdown full width  */
-    .navbar .dropdown {
+    /* .navbar .dropdown {
         position: static;
-    }
+    } */
 
     .navbar .dropdown-menu {
         width: 100%;
@@ -53,4 +53,19 @@
         border: 1px solid rgba(0, 0, 0, 0.15);
         background-color: #fff;
     }
+}
+
+/* Form Styles modal contact */
+.form-control {
+    border-radius: 20px !important;
+}
+
+.form-control:focus {
+    border: 1px solid #9933cc !important;
+    box-shadow: none !important;
+}
+
+::placeholder {
+    font-size: 0.85rem !important;
+    opacity: 0.5 !important;
 }

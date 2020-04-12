@@ -10,7 +10,7 @@ mongoose.set("useNewUrlParser", true);
 mongoose.set("useFindAndModify", false);
 mongoose.set("useCreateIndex", true);
 mongoose.set("useUnifiedTopology", true);
-mongoose.connect(process.env.MONGO_DB);
+mongoose.connect(process.env.MONGO_DB1);
 var db = mongoose.connection;
 db.once("open", () => {
     console.log("DB connected");
@@ -30,7 +30,13 @@ app.use(methodOverride("_method"));
 
 // routes
 app.use("/", require("./routes/home"));
+app.use("/discount", require("./routes/discount"));
+app.use("/boards", require("./routes/boards"));
 
 app.listen(process.env.PORT || 3000, () => {
-    console.log("server on!!" + process.env.PORT);
+    if (process.env.PORT) {
+        console.log("server on!!" + process.env.PORT);
+    } else {
+        console.log("server on!!" + 3000);
+    }
 });
