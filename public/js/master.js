@@ -1,23 +1,38 @@
-$(document).ready(function () {
-    // executes when HTML-Document is loaded and DOM is ready
+// public/js/script.js
 
-    // breakpoint and up
-    $(window).resize(function () {
-        if ($(window).width() >= 980) {
-            // when you hover a toggle show its dropdown menu
-            $(".navbar .dropdown-toggle").hover(function () {
-                $(this).parent().toggleClass("show");
-                $(this).parent().find(".dropdown-menu").toggleClass("show");
-            });
+$(function () {
+    function get2digits(num) {
+        return ("0" + num).slice(-2);
+    }
 
-            // hide the menu when the mouse leaves the dropdown
-            $(".navbar .dropdown-menu").mouseleave(function () {
-                $(this).removeClass("show");
-            });
+    function getDate(dateObj) {
+        if (dateObj instanceof Date) return dateObj.getFullYear() + "-" + get2digits(dateObj.getMonth() + 1) + "-" + get2digits(dateObj.getDate());
+    }
 
-            // do something here
-        }
-    });
+    function getTime(dateObj) {
+        if (dateObj instanceof Date) return get2digits(dateObj.getHours()) + ":" + get2digits(dateObj.getMinutes()) + ":" + get2digits(dateObj.getSeconds());
+    }
 
-    // document ready
+    function convertDate() {
+        $("[data-date]").each(function (index, element) {
+            var dateString = $(element).data("date");
+            if (dateString) {
+                var date = new Date(dateString);
+                $(element).html(getDate(date));
+            }
+        });
+    }
+
+    function convertDateTime() {
+        $("[data-date-time]").each(function (index, element) {
+            var dateString = $(element).data("date-time");
+            if (dateString) {
+                var date = new Date(dateString);
+                $(element).html(getDate(date) + " " + getTime(date));
+            }
+        });
+    }
+
+    convertDate();
+    convertDateTime();
 });

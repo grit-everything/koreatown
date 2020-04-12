@@ -6,15 +6,35 @@
     <body>
         <%- include('../partials/nav') -%>
         <table class="board-table table table-sm border-bottom">
-            <thead>
+            <thead class="thead-light">
                 <tr>
                     <th scope="col" class="numId">#</th>
-                    <th>제목</th>
-                    <th>조회수</th>
-                    <th>글쓴이</th>
-                    <th>날짜</th>
+                    <th scope="col" class="title">제목</th>
+                    <th scope="col" class="views">조회수</th>
+                    <th scope="col" class="author">글쓴이</th>
+                    <th scope="col" class="date">날짜</th>
                 </tr>
             </thead>
+            <tbody>
+                <% if(boards == null || boards.length ==0){ %>
+                <tr>
+                    <td colspan="5">There is no data to show :(</td>
+                </tr>
+                <% } %> <% boards.forEach((board)=>{ %>
+                <tr>
+                    <td>
+                        <a href="/boards/<% post._id %>"><div><% board.title %></div></a>
+                    </td>
+                    <td class="data">
+                        <span data-data="<% post.createdAt %>"></span>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
         </table>
+
+        <div>
+            <a class="btn btn-primary" href="/boards/new">New</a>
+        </div>
     </body>
 </html>
