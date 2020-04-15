@@ -30,8 +30,9 @@ app.use(methodOverride("_method"));
 
 // routes
 app.use("/", require("./routes/home"));
-app.use("/discount", require("./routes/discount"));
-app.use("/boards", require("./routes/boards"));
+app.use("/discount", require("./routes/discount")); //! 할인정보
+app.use("/boards", require("./routes/boards")); //! 자유게시판
+app.use("/users", require("./routes/users"));
 
 app.listen(process.env.PORT || 3000, () => {
     if (process.env.PORT) {

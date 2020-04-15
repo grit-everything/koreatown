@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('../partials/head') %>
+    </head>
+    <body>
+        <%- include('../partials/nav') %>
+
+        <div class="container mb-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb p-1 pl-2 pr-2">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/boards">자유게시판</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">글쓰기</li>
+                </ol>
+            </nav>
+
+            <form action="/boards/<%= board._id %>?_method=put" method="post">
+                <div class="form-group">
+                    <label for="title">제목</label>
+                    <input type="text" id="title" name="title" value="<%= board.title%>" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label for="body">내용</label>
+                    <textarea id="body" name="body" rows="5" class="form-control"><%= board.body %></textarea>
+                </div>
+
+                <div>
+                    <a class="btn btn-primary" href="/boards/<%= board._id%>">뒤로</a>
+                    <button type="submit" class="btn btn-primary">제출</button>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
