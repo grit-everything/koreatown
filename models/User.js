@@ -60,7 +60,7 @@ userSchema.path("password").validate(function (v) {
         if (!user.passwordConfirmation) {
             user.invalidate("passwordConfirmation", "Password Confirmation is required.");
         }
-        if (!user.password !== user.passwordConfirmation) {
+        if (user.password !== user.passwordConfirmation) {
             user.invalidate("passwordConfirmation", "Password Confirmation does not matched!");
         }
     }
