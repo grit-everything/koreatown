@@ -1,3 +1,9 @@
+/* public/css/master.css */
+
+.user-form {
+    width: 400px;
+}
+
 /* adds some margin below the link sets  */
 /* .navbar .dropdown-menu div[class*="col"] {
     margin-bottom: 1rem;

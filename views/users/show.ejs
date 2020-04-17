@@ -7,7 +7,31 @@
         <%- include('../partials/nav')%>
         <div class="container mb-3">
             <h3 class="contentBoxTop"><%= user.username%></h3>
-            <form action="/users" method="post" class="user-form"></form>
+
+            <form action="/users" method="post" class="user-form">
+                <fieldset disabled>
+                    <div class="form-group row">
+                        <label for="nickname" class="col-sm-3 col-form-label">Nickname</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" id="nickname" name="nickname" value="<%=user.nickname%>" type="text" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="email" class="col-sm-3 col-form-label">Email</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" id="email" name="email" value="<%=user.email%>" type="text" />
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+
+            <div>
+                <a href="/users" class="btn btn-primary">뒤로</a>
+                <a href="/users/<%= user.username%>/edit" class="btn btn-primary">수정</a>
+                <form action="/users/<%= user.username%>?_method=delete" method="post" class="d-inline">
+                    <a class="btn btn-primary" href="javascript:void(0)" onclick="confirm('Do you want to delete this?')?this.parentElement.submit():null;">삭제</a>
+                </form>
+            </div>
         </div>
     </body>
 </html>
