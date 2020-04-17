@@ -1,5 +1,6 @@
 // mongoose/User.js
 var mongoose = require("mongoose");
+var bcrypt = require("bcryptjs");
 
 // Schema
 
@@ -68,7 +69,7 @@ userSchema.path("password").validate(function (v) {
     if (!user.isNew) {
         if (!user._currentPassword) {
             user.invalidate("currentPassword", "Current password is required");
-        } else if (user._currentPassword != user._originalPassword) {
+        } else if (!bcrypt.compareSync(user._currentPassword, user._originalPassword)) {
             user.invalidate("currentPassword", "Current Password is invalid");
         }
         if (user._newPassword !== user.passwordConfirmation) {
@@ -76,6 +77,24 @@ userSchema.path("password").validate(function (v) {
         }
     }
 });
+
+// hash password
+userSchema.pre("save", function (next) {
+    var user = this;
+    if (!user.isModified("password")) {
+        return next();
+    } else {
+        user.password = bcrypt.hashSync(user.password);
+        return next();
+    }
+});
+
+// model methods
+
+userSchema.methods.authenticate = function (password) {
+    var user = this;
+    return bcrypt.compareSync(password, user.password);
+};
 
 //model & export
 
