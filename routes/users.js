@@ -91,7 +91,8 @@ router.delete("/:username", function (req, res) {
     });
 });
 
-// functions
+module.exports = router;
+
 function parseError(errors) {
     var parsed = {};
     if (errors.name == "ValidationError") {
@@ -106,5 +107,3 @@ function parseError(errors) {
     }
     return parsed;
 }
-
-module.exports = router;

@@ -9,24 +9,25 @@ var userSchema = mongoose.Schema(
         username: {
             type: String,
             required: [true, "Username is required!"],
-            match: [/^.{4,12}$/, "4-12자리 문자입력이 필요합니다!"],
+            match: [/^.{4,12}$/, "Should be 4-12 characters!"],
+            trim: true,
             unique: true,
         },
         password: {
             type: String,
-            reuiqred: [true, "Password is required!"],
+            required: [true, "Password is required!"],
             select: false,
         },
         nickname: {
             type: String,
-            required: [true, "Nickname is required!"],
-            match: [/^.{4,12}$/, "4-12자리 문자입력이 필요합니다!"],
-            unique: true,
+            required: [true, "Name is required!"],
+            match: [/^.{4,12}$/, "Should be 4-12 characters!"],
+            trim: true,
         },
         email: {
             type: String,
-            required: [true, "Email is required!"],
             match: [/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Should be a vaild email address!"],
+            trim: true,
         },
     },
     {
@@ -118,7 +119,7 @@ userSchema.pre("save", function (next) {
 });
 
 // model methods
-
+//@ user model의 password hash와 입력받은 password text를 비교하는 method를 추가합니다. 이번 예제에 사용되는 method는 아니고 나중에 로그인을 만들때 될 method인데 bcrypt를 사용하므로 지금 추가해봤습니다
 userSchema.methods.authenticate = function (password) {
     var user = this;
     return bcrypt.compareSync(password, user.password);

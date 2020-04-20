@@ -4,6 +4,7 @@ var bodyParser = require("body-parser");
 var methodOverride = require("method-override");
 var flash = require("connect-flash");
 var session = require("express-session");
+var passport = require("./config/passport");
 
 var app = express();
 
@@ -32,16 +33,28 @@ app.use(methodOverride("_method"));
 app.use(flash());
 app.use(session({ secret: "Mysecret", resave: true, saveUninitialized: true }));
 
+// passport
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Custom Middlewares
+app.use(function (req, res, next) {
+    res.locals.isAuthenticated = req.isAuthenticated(); //@ req.isAuthenticated() passport에서 제공하는 함수다. 현재 로그인 되었으면 true 아니면 false를 return한다.
+    res.locals.currentUser = req.user;
+    next();
+});
+
 // routes
 app.use("/", require("./routes/home"));
 app.use("/discount", require("./routes/discount")); //! 할인정보
 app.use("/boards", require("./routes/boards")); //! 자유게시판
 app.use("/users", require("./routes/users"));
 
-app.listen(process.env.PORT || 3000, () => {
+app.listen(process.env.PORT || 5000, () => {
     if (process.env.PORT) {
         console.log("server on!!" + process.env.PORT);
     } else {
-        console.log("server on!!" + 3000);
+        console.log("server on!!" + 5000);
     }
 });
