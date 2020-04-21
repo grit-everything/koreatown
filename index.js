@@ -2,8 +2,8 @@ var express = require("express");
 var mongoose = require("mongoose");
 var bodyParser = require("body-parser");
 var methodOverride = require("method-override");
-var flash = require("connect-flash");
 var session = require("express-session");
+var flash = require("connect-flash");
 var passport = require("./config/passport");
 
 var app = express();
@@ -40,7 +40,9 @@ app.use(passport.session());
 
 // Custom Middlewares
 app.use(function (req, res, next) {
-    res.locals.isAuthenticated = req.isAuthenticated(); //@ req.isAuthenticated() passport에서 제공하는 함수다. 현재 로그인 되었으면 true 아니면 false를 return한다.
+    res.locals.isAuthenticated = req.isAuthenticated();
+    //@ res.locals 에 한마디로 로컬변수(Local Variables)로 isAuthenticated를 설정하는 표현식이다. 모든 미들웨어와 마찬가지로 어느 페이지에서도 호출이 가능하다. 즉 res.locals."값" 값은 로컬변수로 저장되고, 사용할 수 있다.
+    //@ req.isAuthenticated() passport에서 제공하는 함수다. 현재 로그인 되었으면 true 아니면 false를 return한다.
     res.locals.currentUser = req.user;
     next();
 });

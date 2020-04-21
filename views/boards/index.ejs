@@ -15,7 +15,7 @@
                         <!-- <th scope="col" class="numId">글번호</th> -->
                         <th scope="col" class="title">제목</th>
                         <!-- <th scope="col" class="views">조회수</th> -->
-                        <!-- <th scope="col" class="author">글쓴이</th> -->
+                        <th scope="col" class="author">글쓴이</th>
                         <th scope="col" class="date">날짜</th>
                     </tr>
                 </thead>
@@ -24,11 +24,15 @@
                     <tr>
                         <td colspan="2">There is no data to show :(</td>
                     </tr>
-                    <% } %> <% boards.forEach((board)=>{ %>
+                    <% } %> <% boards.forEach(function(board){ %>
                     <tr>
                         <td>
                             <a href="/boards/<%= board._id %>"><div class="ellipsis"><%= board.title %></div></a>
                         </td>
+                        <td class="author">
+                            <div class="ellippsis"><%= board.author?board.author.nickname:""%></div>
+                        </td>
+
                         <td class="date">
                             <span data-date="<%= board.createdAt %>"></span>
                         </td>

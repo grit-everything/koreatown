@@ -8,19 +8,19 @@ var userSchema = mongoose.Schema(
     {
         username: {
             type: String,
-            required: [true, "Username is required!"],
+            required: [true, "아이디를 입력해주세요!"],
             match: [/^.{4,12}$/, "Should be 4-12 characters!"],
             trim: true,
             unique: true,
         },
         password: {
             type: String,
-            required: [true, "Password is required!"],
+            required: [true, "비밀번호를 입력해주세요!"],
             select: false,
         },
         nickname: {
             type: String,
-            required: [true, "Name is required!"],
+            required: [true, "별명을 입력해주세요!"],
             match: [/^.{4,12}$/, "Should be 4-12 characters!"],
             trim: true,
         },
@@ -79,19 +79,22 @@ var passwordRegexErrorMessage = "알파벳과 숫자를 최소 8자리 이상 �
 
 userSchema.path("password").validate(function (v) {
     var user = this;
+
     //create user
+
     if (user.isNew) {
         if (!user.passwordConfirmation) {
-            user.invalidate("passwordConfirmation", "Password Confirmation is required.");
+            user.invalidate("passwordConfirmation", "비밀번호를 확인해 주세요!");
         }
         if (!passwordRegex.test(user.password)) {
             user.invalidate("password", passwordRegexErrorMessage);
         }
         if (user.password !== user.passwordConfirmation) {
-            user.invalidate("passwordConfirmation", "Password Confirmation does not matched!");
+            user.invalidate("passwordConfirmation", "비밀번호가 일치하지 않습니다!");
         }
     }
     //update user
+
     if (!user.isNew) {
         if (!user.currentPassword) {
             user.invalidate("currentPassword", "Current password is required");

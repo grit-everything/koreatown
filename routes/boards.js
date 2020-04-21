@@ -1,12 +1,14 @@
 var express = require("express");
 var router = express.Router();
 var Board = require("../models/Board");
+var util = require("../util");
 
 // Index
-router.get("/", (req, res) => {
+router.get("/", function (req, res) {
     Board.find({})
+        .populate("author") //@ model.populate()함수는 relationship이 형성되어 있는 항목의 값을 생성해 준다. 현재 board의 author에는 user의 id가 입력되어 있는데, 이 값을 통해 실제로 user의 값을 author에 생성하게 된다.
         .sort("-createdAt")
-        .exec((err, boards) => {
+        .exec(function (err, boards) {
             if (err) return res.json(err);
             res.render("boards/index", { boards: boards });
         });
@@ -14,37 +16,57 @@ router.get("/", (req, res) => {
 
 // New
 router.get("/new", (req, res) => {
-    res.render("boards/new");
+    var board = req.flash("board")[0] || {};
+    var errors = req.flash("errors")[0] || {};
+    res.render("boards/new", { board: board, errors: errors });
 });
 // Create
 router.post("/", (req, res) => {
+    req.body.author = req.user._id;
     Board.create(req.body, (err, board) => {
-        if (err) return res.json(err);
+        if (err) {
+            req.flash("board", req.body);
+            req.flash("errors", util.parseError(err));
+            res.redirect("/boards/new");
+        }
         res.redirect("/boards");
     });
 });
 // Show
 router.get("/:id", (req, res) => {
-    Board.findOne({ _id: req.params.id }, (err, board) => {
-        if (err) return res.json(err);
-        res.render("boards/show", { board: board });
-    });
+    Board.findOne({ _id: req.params.id })
+        .populate("author")
+        .exec(function (err, board) {
+            if (err) return res.json(err);
+            res.render("boards/show", { board: board });
+        });
 });
 
 // Edit
 router.get("/:id/edit", (req, res) => {
-    Board.findOne({ _id: req.params.id }, (err, board) => {
-        if (err) return res.json(err);
-        res.render("boards/edit", { board: board });
-    });
+    var board = req.flash("board")[0];
+    var errors = req.flash("errors")[0] || {};
+    if (!board) {
+        Board.findOne({ _id: req.params.id }, (err, board) => {
+            if (err) return res.json(err);
+            res.render("boards/edit", { board: board, errors: errors });
+        });
+    } else {
+        board._id = req.params.id;
+        res.render("boards/edit", { board: board, errors: errors });
+    }
 });
 
 // Update
-router.put("/:id", (req, res) => {
+router.put("/:id", function (req, res) {
     req.body.updatedAt = Date.now();
-    Board.findOneAndUpdate({ _id: req.params.id }, req.body, (err, board) => {
-        if (err) return res.json(err);
-        res.redirect("/boards");
+    Board.findOneAndUpdate({ _id: req.params.id }, req.body, { runValidators: true }, function (err, board) {
+        if (err) {
+            req.flash("board", req.body);
+            req.flash("errors", util.parseError(err));
+            return res.redirect("/boards/" + req.params.id + "/edit");
+        }
+        res.redirect("/boards/" + req.params.id);
     });
 });
 

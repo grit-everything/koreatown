@@ -29,11 +29,11 @@ router.post(
 
         if (!req.body.username) {
             isValid = false;
-            errors.username = "Username is required!";
+            errors.username = "아이디를 입력하세요!";
         }
         if (!req.body.password) {
             isValid = false;
-            errors.password = "Password is required!";
+            errors.password = "비밀번호를 입력하세요!";
         }
 
         if (isValid) {
