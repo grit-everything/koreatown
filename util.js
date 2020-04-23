@@ -19,4 +19,19 @@ util.parseError = function (errors) {
     return parsed;
 };
 
+util.isLoggedin = function (req, res, next) {
+    if (req.isAuthenticated()) {
+        next();
+    } else {
+        req.flash("errors", { login: "로그인 후 이용해주세요~!" });
+        res.redirect("/login");
+    }
+};
+
+util.noPermission = function (req, res) {
+    req.flash("errors", { login: "접근 권한이 없습니다." });
+    req.logout();
+    res.redirect("/login");
+};
+
 module.exports = util;

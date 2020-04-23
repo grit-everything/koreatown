@@ -15,13 +15,13 @@ router.get("/", function (req, res) {
 });
 
 // New
-router.get("/new", (req, res) => {
+router.get("/new", util.isLoggedin, function (req, res) {
     var board = req.flash("board")[0] || {};
     var errors = req.flash("errors")[0] || {};
     res.render("boards/new", { board: board, errors: errors });
 });
 // Create
-router.post("/", (req, res) => {
+router.post("/", util.isLoggedin, function (req, res) {
     req.body.author = req.user._id;
     Board.create(req.body, (err, board) => {
         if (err) {
@@ -33,7 +33,7 @@ router.post("/", (req, res) => {
     });
 });
 // Show
-router.get("/:id", (req, res) => {
+router.get("/:id", function (req, res) {
     Board.findOne({ _id: req.params.id })
         .populate("author")
         .exec(function (err, board) {
@@ -43,11 +43,11 @@ router.get("/:id", (req, res) => {
 });
 
 // Edit
-router.get("/:id/edit", (req, res) => {
+router.get("/:id/edit", checkPermission, util.isLoggedin, function (req, res) {
     var board = req.flash("board")[0];
     var errors = req.flash("errors")[0] || {};
     if (!board) {
-        Board.findOne({ _id: req.params.id }, (err, board) => {
+        Board.findOne({ _id: req.params.id }, function (err, board) {
             if (err) return res.json(err);
             res.render("boards/edit", { board: board, errors: errors });
         });
@@ -58,7 +58,7 @@ router.get("/:id/edit", (req, res) => {
 });
 
 // Update
-router.put("/:id", function (req, res) {
+router.put("/:id", checkPermission, util.isLoggedin, function (req, res) {
     req.body.updatedAt = Date.now();
     Board.findOneAndUpdate({ _id: req.params.id }, req.body, { runValidators: true }, function (err, board) {
         if (err) {
@@ -71,11 +71,21 @@ router.put("/:id", function (req, res) {
 });
 
 // Destroy
-router.delete("/:id", (req, res) => {
-    Board.deleteOne({ _id: req.params.id }, (err) => {
+router.delete("/:id", checkPermission, util.isLoggedin, function (req, res) {
+    Board.deleteOne({ _id: req.params.id }, function (err) {
         if (err) return err.json(err);
         res.redirect("/boards");
     });
 });
 
 module.exports = router;
+
+// private function
+function checkPermission(req, res, next) {
+    Board.findOne({ _id: req.params.id }, function (err, board) {
+        if (err) return res.json(err);
+        if (board.author != req.user.id) return util.noPermission(req.res);
+
+        next();
+    });
+}
