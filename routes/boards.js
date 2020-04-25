@@ -3,15 +3,34 @@ var router = express.Router();
 var Board = require("../models/Board");
 var util = require("../util");
 
-// Index
-router.get("/", function (req, res) {
-    Board.find({})
-        .populate("author") //@ model.populate()함수는 relationship이 형성되어 있는 항목의 값을 생성해 준다. 현재 board의 author에는 user의 id가 입력되어 있는데, 이 값을 통해 실제로 user의 값을 author에 생성하게 된다.
-        .sort("-createdAt")
-        .exec(function (err, boards) {
-            if (err) return res.json(err);
-            res.render("boards/index", { boards: boards });
-        });
+// // Index
+// router.get("/", function (req, res) {
+//     Board.find({})
+//         .populate("author") //@ model.populate()함수는 relationship이 형성되어 있는 항목의 값을 생성해 준다. 현재 board의 author에는 user의 id가 입력되어 있는데, 이 값을 통해 실제로 user의 값을 author에 생성하게 된다.
+//         .sort("-createdAt")
+//         .exec(function (err, boards) {
+//             if (err) return res.json(err);
+//             res.render("boards/index", { boards: boards });
+//         });
+// });
+
+router.get("/", async function (req, res) {
+    var page = Math.max(1, parseInt(req.query.page));
+    var limit = Math.max(1, parseInt(req.query.limit));
+    page = !isNaN(page) ? page : 1;
+    limit = !isNaN(limit) ? limit : 10;
+
+    var skip = (page - 1) * limit;
+    var count = await Board.countDocuments({});
+    var maxPage = Math.ceil(count / limit);
+    var boards = await Board.find({}).populate("author").sort("-createdAt").skip(skip).limit(limit).exec();
+
+    res.render("boards/index", {
+        boards: boards,
+        currentPage: page,
+        maxPage: maxPage,
+        limit: limit,
+    });
 });
 
 // New
