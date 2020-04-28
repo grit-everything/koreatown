@@ -5,6 +5,7 @@ var methodOverride = require("method-override");
 var session = require("express-session");
 var flash = require("connect-flash");
 var passport = require("./config/passport");
+var util = require("./util");
 
 var app = express();
 
@@ -50,8 +51,9 @@ app.use(function (req, res, next) {
 // routes
 app.use("/", require("./routes/home"));
 app.use("/discount", require("./routes/discount")); //! 할인정보
-app.use("/boards", require("./routes/boards")); //! 자유게시판
+app.use("/boards", util.getPostQueryString, require("./routes/boards")); //! 자유게시판
 app.use("/users", require("./routes/users"));
+app.use("/comments", util.getPostQueryString, require("./routes/comments"));
 
 app.listen(process.env.PORT || 5000, () => {
     if (process.env.PORT) {

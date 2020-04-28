@@ -15,7 +15,7 @@
                 </ol>
             </nav>
 
-            <form action="/boards/<%= board._id %>?_method=put" method="post">
+            <form action="/boards/<%= board._id %>?_method=put<%= getPostQueryString(true) %>" method="post">
                 <div class="form-group">
                     <label for="title">제목</label>
                     <input type="text" id="title" name="title" value="<%= board.title%>" class="form-control <%= (errors.title)?'is-invalid':'' %>" />
@@ -39,7 +39,7 @@
                 <%}%>
 
                 <div>
-                    <a class="btn btn-primary" href="/boards">뒤로</a>
+                    <a class="btn btn-primary" href="/boards<%= getPostQueryString() %>">뒤로</a>
                     <button type="submit" class="btn btn-primary">제출</button>
                 </div>
             </form>

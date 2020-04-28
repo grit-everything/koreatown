@@ -1,5 +1,27 @@
 /* public/css/master.css */
 
+.post-body,
+.comment-text {
+    white-space: pre-line;
+}
+
+/* public/css/master.css */
+
+.highlighted {
+    background-color: yellow;
+}
+
+/* public/css/master.css */
+
+.post-index-tool {
+    max-width: 450px;
+}
+.post-index-tool input[type='text'] {
+    max-width: 130px;
+}
+
+/* public/css/master.css */
+
 .user-form {
     width: 400px;
 }
