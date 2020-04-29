@@ -1,0 +1,18 @@
+<div class="mt-3">
+    <form action="/comments?boardId=<%= board._id %><%= getPostQueryString(true) %>" method="post">
+        <fieldset <%= !isAuthenticated?'disabled':'' %> >
+            <div class="row">
+                <div class="col-8">
+                    <textarea name="text" rows="2" class="form-control <%= (commentError.errors.text)?'is-invalid':'' %>"><%= commentForm.form.text %> </textarea>
+                </div>
+                <div class="col-4">
+                    <button type="submit" class="btn btn-primary h-100 mr-2">댓글 추가</button>
+                </div>
+            </div>
+            <% if(commentError.errors.text){ %> 
+                <span class="invalid-feedback d-block"><%= commentError.errors.text.message %> </span>
+            <% } %> 
+        </fieldset>
+
+    </form>
+</div>

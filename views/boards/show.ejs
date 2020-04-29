@@ -49,37 +49,41 @@
             <div class="mt-3 border-bottom">
                 <% comments.forEach(function(comment){%>
                 <div class="border-top pt-1 pb-1">
+                    <% if(comment.isDeleted){ %>
+                    <div class="text-muted p-2">(삭제된 댓글)</div>
+                    <% } else{%>
                     <div class="row">
                         <div class="col-3 col-md-2 col-lg-1 pl-4"><%= comment.author.nickname %></div>
-                        <div class="col-9 col-md-10 col-lg-11">
+                        <div id="comment-<%= comment._id  %>" class="col-9 col-md-10 col-lg-11 <%= (commentError._id == comment._id)?'comment-edit-enabled':'' %>">
                             <div class="comment-show">
                                 <div class="comment-text mb-3"><%= comment.text %></div>
-                                <small class="d-block"> (Created: <span data-date-time="<%= comment.createdAt %> "></span>) </small>
+                                <small class="d-block">
+                                    (Created: <span data-date-time="<%= comment.createdAt %> "></span> <% if(comment.updatedAt){ %> | Updated: <span data-date-time="<%= comment.updatedAt %>"></span>
+                                    <% } %> )
+                                </small>
+                                <% if(isAuthenticated && comment.author && currentUser.id == comment.author.id){ %>
+                                <small class="d-block">
+                                    <a href="javascript:void(0)" onclick="$('.comment-reply-enabled').removeClass('comment-reply-enabled');  $('#comment-<%= comment._id %>').addClass('comment-edit-enabled')">수정</a>
+                                    |
+                                    <form action="/comments/<%= comment._id %>?boardId=<%= board._id %>&_method=delete<%= getPostQueryString(true) %>" method="post" class="d-inline">
+                                        <a href="javascript:void(0)" onclick="confirm('삭제하시겠습니까?')?this.parentElement.submit():null;">삭제</a>
+                                    </form>
+                                </small>
+                                <% } %>
+                            </div>
+                            <div class="comment-edit">
+                                <%- include('./partials/comment-form', { actionUrl: '/comments/'+ comment._id + '?boardId='+board._id+'&_method=put', comment:comment, commentForm:commentForm, commentError:commentError, }); %>
                             </div>
                         </div>
                     </div>
+                    <% } %>
                 </div>
                 <% }) %>
             </div>
             <% } %>
 
             <div class="mt-3">
-                <form action="/comments?boardId=<%= board._id %><%= getPostQueryString(true) %>" method="post">
-                    <fieldset <%= !isAuthenticated?'disabled':'' %> >
-                        <div class="row">
-                            <div class="col-8">
-                                <textarea name="text" rows="2" class="form-control <%= (commentError.errors.text)?'is-invalid':'' %>"><%= commentForm.form.text %> </textarea>
-                            </div>
-                            <div class="col-4">
-                                <button type="submit" class="btn btn-primary h-100 mr-2">댓글 추가</button>
-                            </div>
-                        </div>
-                        <% if(commentError.errors.text){ %> 
-                            <span class="invalid-feedback d-block"><%= commentError.errors.text.message %> </span>
-                        <% } %> 
-                    </fieldset>
-
-                </form>
+                <%- include('./partials/comment-form', { actionUrl:'/comments?boardId=' + board._id, comment: {}, commentForm: commentForm, commentError: commentError, }); %>
             </div>
         </div>
     </body>

@@ -1,3 +1,14 @@
+/* publish/css/master.css */
+
+.comment-edit,
+.comment-edit-enabled .comment-show {
+    display: none;
+}
+
+.comment-edit-enabled .comment-edit {
+    display: inherit;
+}
+
 /* public/css/master.css */
 
 .post-body,
