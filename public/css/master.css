@@ -1,40 +1,15 @@
-/* publish/css/master.css */
-
-.comment-edit,
-.comment-edit-enabled .comment-show {
-    display: none;
+body {
+    font-family: 'Open Sans', sans-serif;
 }
-
-.comment-edit-enabled .comment-edit {
-    display: inherit;
+.breadcrumb-item {
+    font-size: 0.8em !important;
 }
-
-/* public/css/master.css */
-
-.post-body,
-.comment-text {
-    white-space: pre-line;
-}
-
-/* public/css/master.css */
-
-.highlighted {
-    background-color: yellow;
-}
-
-/* public/css/master.css */
-
-.post-index-tool {
-    max-width: 450px;
-}
-.post-index-tool input[type='text'] {
-    max-width: 130px;
-}
-
-/* public/css/master.css */
-
-.user-form {
-    width: 400px;
+.ellipsis {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .board-table {
@@ -45,61 +20,38 @@
     width: 100px;
 }
 
-/* adds some margin below the link sets  */
-/* .navbar .dropdown-menu div[class*="col"] {
-    margin-bottom: 1rem;
+.board-body,
+.comment-text {
+    white-space: pre-line;
+}
+.board-info {
+    font-size: 0.8em;
 }
 
-.navbar .dropdown-menu {
-    border: none;
-    background-color: #0060c8 !important;
-} */
+.user-form {
+    width: 400px;
+}
 
-/* breakpoint and up - mega dropdown styles */
-@media screen and (min-width: 992px) {
-    /* remove the padding from the navbar so the dropdown hover state is not broken */
-    .navbar {
-        padding-top: 0px;
-        padding-bottom: 0px;
-    }
+.board-index-tool {
+    max-width: 450px;
+}
+.board-index-tool input[type='text'] {
+    max-width: 130px;
+}
 
-    /* remove the padding from the nav-item and add some margin to give some breathing room on hovers */
-    .navbar .nav-item {
-        padding: 0.5rem 0.5rem;
-        margin: 0 0.25rem;
-    }
+.highlighted {
+    background-color: yellow;
+}
 
-    /* makes the dropdown full width  */
-    /* .navbar .dropdown {
-        position: static;
-    } */
+.comment-edit,
+.comment-reply,
+.comment-edit-enabled .comment-show {
+    display: none;
+}
 
-    .navbar .dropdown-menu {
-        width: 100%;
-        left: 0;
-        right: 0;
-        /*  height of nav-item  */
-        top: 45px;
-
-        display: block;
-        visibility: hidden;
-        opacity: 0;
-        transition: visibility 0s, opacity 0.3s linear;
-    }
-
-    /* shows the dropdown menu on hover */
-    .navbar .dropdown:hover .dropdown-menu,
-    .navbar .dropdown .dropdown-menu:hover {
-        display: block;
-        visibility: visible;
-        opacity: 1;
-        transition: visibility 0s, opacity 0.3s linear;
-    }
-
-    .navbar .dropdown-menu {
-        border: 1px solid rgba(0, 0, 0, 0.15);
-        background-color: #fff;
-    }
+.comment-edit-enabled .comment-edit,
+.comment-reply-enabled .comment-reply {
+    display: inherit;
 }
 
 /* Form Styles modal contact */

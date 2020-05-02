@@ -24,7 +24,8 @@
 
                     <div class="col-md-5 col-lg-4 col-xl-3 order-sm-1 order-md-2">
                         <div class="board-info card m-2 p-2">
-                            <span>별명</span> : <span data-search-highlight="author"> <%= board.author? board.author.nickname:""%></span>
+                            <span>별명</span> :
+                            <span data-search-highlight="author"> <%= board.author? board.author.nickname:""%></span>
                             <div><span>Created</span> : <span data-date-time="<%= board.createdAt %>"></span></div>
                             <% if(board.updatedAt){ %>
                             <div><span>Updated</span> : <span data-date-time="<%= board.updatedAt %>"></span></div>
@@ -45,45 +46,15 @@
             </div>
 
             <h4 class="mt-3">댓글</h4>
-            <% if(comments.length){ %>
+
+            <% if(commentTrees.length){ %>
             <div class="mt-3 border-bottom">
-                <% comments.forEach(function(comment){%>
-                <div class="border-top pt-1 pb-1">
-                    <% if(comment.isDeleted){ %>
-                    <div class="text-muted p-2">(삭제된 댓글)</div>
-                    <% } else{%>
-                    <div class="row">
-                        <div class="col-3 col-md-2 col-lg-1 pl-4"><%= comment.author.nickname %></div>
-                        <div id="comment-<%= comment._id  %>" class="col-9 col-md-10 col-lg-11 <%= (commentError._id == comment._id)?'comment-edit-enabled':'' %>">
-                            <div class="comment-show">
-                                <div class="comment-text mb-3"><%= comment.text %></div>
-                                <small class="d-block">
-                                    (Created: <span data-date-time="<%= comment.createdAt %> "></span> <% if(comment.updatedAt){ %> | Updated: <span data-date-time="<%= comment.updatedAt %>"></span>
-                                    <% } %> )
-                                </small>
-                                <% if(isAuthenticated && comment.author && currentUser.id == comment.author.id){ %>
-                                <small class="d-block">
-                                    <a href="javascript:void(0)" onclick="$('.comment-reply-enabled').removeClass('comment-reply-enabled');  $('#comment-<%= comment._id %>').addClass('comment-edit-enabled')">수정</a>
-                                    |
-                                    <form action="/comments/<%= comment._id %>?boardId=<%= board._id %>&_method=delete<%= getPostQueryString(true) %>" method="post" class="d-inline">
-                                        <a href="javascript:void(0)" onclick="confirm('삭제하시겠습니까?')?this.parentElement.submit():null;">삭제</a>
-                                    </form>
-                                </small>
-                                <% } %>
-                            </div>
-                            <div class="comment-edit">
-                                <%- include('./partials/comment-form', { actionUrl: '/comments/'+ comment._id + '?boardId='+board._id+'&_method=put', comment:comment, commentForm:commentForm, commentError:commentError, }); %>
-                            </div>
-                        </div>
-                    </div>
-                    <% } %>
-                </div>
-                <% }) %>
+                <% commentTrees.forEach(function(comment){%> <%- include('./partials/comment-show', { board: board, comment: comment, commentForm: commentForm, commentError: commentError, }); %> <% }) %>
             </div>
             <% } %>
 
             <div class="mt-3">
-                <%- include('./partials/comment-form', { actionUrl:'/comments?boardId=' + board._id, comment: {}, commentForm: commentForm, commentError: commentError, }); %>
+                <%- include('./partials/comment-form', { actionUrl:'/comments?boardId=' + board._id, comment: {}, commentForm: commentForm, commentError: commentError, parentComment: null, }); %>
             </div>
         </div>
     </body>
