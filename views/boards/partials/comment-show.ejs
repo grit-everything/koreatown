@@ -8,7 +8,7 @@
         <div class="col-3 col-md-2 col-lg-1 pl-4"><%= comment.author.username %></div>
         <div id="comment-<%= comment._id %>" class="col-9 col-md-10 col-lg-11 <%= (commentError._id == comment._id)?'comment-edit-enabled':'' %> <%= (commentError.parentComment == comment._id)?'comment-reply-enabled':'' %>">
             <div class="comment-show">
-                <div class="comment-text mb-3"><%= comment.text %></div>
+                <div class="comment-text mb-3"><% if(showReplyIndicator){ %><i class="fas fa-arrow-circle-right">&nbsp&nbsp</i><%= comment.text %> <% } else { %> <%= comment.text %> <% } %></div>
                 <small class="d-block">
                     ( Created: <span data-date-time="<%= comment.createdAt %>"></span> <% if(comment.updatedAt){ %> | Updated:
                     <span data-date-time="<%= comment.updatedAt %>"></span>
@@ -46,6 +46,7 @@
     <% } %>
 
     <div class="ml-3">
-        <% if(comment.childComments){ %> <% comment.childComments.forEach(function(childComment) { %> <%- include('./comment-show', { board: board, comment: childComment, commentForm: commentForm, commentError: commentError, }); %> <% }) %> <% } %>
+        <% if(comment.childComments){ %> <% comment.childComments.forEach(function(childComment) { %> <%- include('./comment-show', { board: board, comment: childComment, commentForm: commentForm, commentError: commentError, showReplyIndicator: true
+        }); %> <% }) %> <% } %>
     </div>
 </div>

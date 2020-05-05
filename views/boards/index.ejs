@@ -12,9 +12,9 @@
             <table class="board-table table table-sm border-bottom">
                 <thead class="thead-light">
                     <tr>
-                        <!-- <th scope="col" class="numId">글번호</th> -->
+                        <th scope="col" class="numId">글번호</th>
                         <th scope="col" class="title">제목</th>
-                        <!-- <th scope="col" class="views">조회수</th> -->
+                        <th scope="col" class="views">조회수</th>
                         <th scope="col" class="author">글쓴이</th>
                         <th scope="col" class="date">날짜</th>
                     </tr>
@@ -22,15 +22,22 @@
                 <tbody>
                     <% if(boards == null || boards.length ==0){ %>
                     <tr>
-                        <td colspan="2">There is no data to show :(</td>
+                        <td colspan="5">게시글이 없습니다.</td>
                     </tr>
                     <% } %> <% boards.forEach(function(board){ %>
                     <tr>
+                        <td class="numId"><%= board.numId %> </td>
                         <td>
-                            <a href="/boards/<%= board._id %><%= getPostQueryString() %> ">
-                                <div data-search-highlight="title" class="ellipsis"><%= board.title %></div>
+                            <a href="/boards/<%= board._id %><%= getPostQueryString() %> " class="title-container">
+                                <div data-search-highlight="title" class="title-ellipsis ellipsis float-left">
+                                    <span class="title-text"><%= board.title %></span>
+                                </div>
+                                <% if(board.commentCount){ %> 
+                                    <small class="title-comments d-inline-bloack pl-2">(<%= board.commentCount  %> )</small>
+                                <% } %> 
                             </a>
                         </td>
+                        <td class="views"><%= board.views %> </td>
                         <td class="author">
                             <a href="/boards<%= getPostQueryString(false, { searchType:'author!', searchText:board.author.nickname})  %> ">
                                 <div data-search-highlight="author" class="ellippsis"><%= board.author?board.author.nickname:""%></div>

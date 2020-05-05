@@ -7,16 +7,6 @@ var util = require('../util');
 
 // Index
 
-// router.get("/", function (req, res) {
-//     Board.find({})
-//         .populate("author") //@ model.populate()함수는 relationship이 형성되어 있는 항목의 값을 생성해 준다. 현재 board의 author에는 user의 id가 입력되어 있는데, 이 값을 통해 실제로 user의 값을 author에 생성하게 된다.
-//         .sort("-createdAt")
-//         .exec(function (err, boards) {
-//             if (err) return res.json(err);
-//             res.render("boards/index", { boards: boards });
-//         });
-// });
-
 router.get('/', async function (req, res) {
   var page = Math.max(1, parseInt(req.query.page));
   var limit = Math.max(1, parseInt(req.query.limit));
@@ -31,12 +21,41 @@ router.get('/', async function (req, res) {
   if (searchQuery) {
     var count = await Board.countDocuments(searchQuery);
     maxPage = Math.ceil(count / limit);
-    boards = await Board.find(searchQuery)
-      .populate('author')
-      .sort('-createdAt')
-      .skip(skip)
-      .limit(limit)
-      .exec();
+    boards = await Board.aggregate([
+      { $match: searchQuery },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      { $unwind: '$author' },
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: 'comments',
+          localField: '_id',
+          foreignField: 'board',
+          as: 'comments',
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          author: {
+            nickname: 1,
+          },
+          views: 1,
+          numId: 1,
+          createdAt: 1,
+          commentCount: { $size: '$comments' },
+        },
+      },
+    ]).exec();
   }
 
   res.render('boards/index', {
@@ -72,13 +91,10 @@ router.get('/:id', function (req, res) {
   var commentForm = req.flash('commentForm')[0] || { _id: null, form: {} };
   var commentError = req.flash('commentError')[0] || { _id: null, parentComment: null, errors: {} };
 
-  Promise.all([
-    Board.findOne({ _id: req.params.id }).populate({ path: 'author', select: 'nickname' }),
-    Comment.find({ board: req.params.id })
-      .sort('createdAt')
-      .populate({ path: 'author', select: 'nickname' }),
-  ])
+  Promise.all([Board.findOne({ _id: req.params.id }).populate({ path: 'author', select: 'nickname' }), Comment.find({ board: req.params.id }).sort('createdAt').populate({ path: 'author', select: 'nickname' })])
     .then(([board, comments]) => {
+      board.views++;
+      board.save();
       var commentTrees = util.convertToTrees(comments, '_id', 'parentComment', 'childComments');
 
       res.render('boards/show', {
@@ -92,14 +108,6 @@ router.get('/:id', function (req, res) {
       return res.json(err);
     });
 });
-
-//     Board.findOne({ _id: req.params.id })
-//         .populate("author")
-//         .exec(function (err, board) {
-//             if (err) return res.json(err);
-//             res.render("boards/show", { board: board });
-//         });
-// });
 
 // Edit
 router.get('/:id/edit', checkPermission, util.isLoggedin, function (req, res) {
@@ -119,10 +127,7 @@ router.get('/:id/edit', checkPermission, util.isLoggedin, function (req, res) {
 // Update
 router.put('/:id', checkPermission, util.isLoggedin, function (req, res) {
   req.body.updatedAt = Date.now();
-  Board.findOneAndUpdate({ _id: req.params.id }, req.body, { runValidators: true }, function (
-    err,
-    board
-  ) {
+  Board.findOneAndUpdate({ _id: req.params.id }, req.body, { runValidators: true }, function (err, board) {
     if (err) {
       req.flash('board', req.body);
       req.flash('errors', util.parseError(err));
