@@ -1,8 +1,11 @@
 var express = require('express');
 var router = express.Router();
+var multer = require('multer');
+var upload = multer({ dest: 'uploadedFiles' });
 var Board = require('../models/Board');
 var Comment = require('../models/Comment');
 var User = require('../models/User');
+var File = require('../models/File');
 var util = require('../util');
 
 // Index
@@ -75,13 +78,19 @@ router.get('/new', util.isLoggedin, function (req, res) {
   res.render('boards/new', { board: board, errors: errors });
 });
 // Create
-router.post('/', util.isLoggedin, function (req, res) {
+router.post('/', util.isLoggedin, upload.single('attachment'), async function (req, res) {
+  var attachment = req.file ? await File.createNewInstance(req.file, req.user_id) : undefined;
+  req.body.attachment = attachment;
   req.body.author = req.user._id;
   Board.create(req.body, (err, board) => {
     if (err) {
       req.flash('board', req.body);
       req.flash('errors', util.parseError(err));
       return res.redirect('/boards/new' + res.locals.getPostQueryString());
+    }
+    if (attachment) {
+      attachment.boardId = board._id;
+      attachment.save();
     }
     res.redirect('/boards' + res.locals.getPostQueryString(false, { page: 1, searchText: '' }));
   });
@@ -91,7 +100,12 @@ router.get('/:id', function (req, res) {
   var commentForm = req.flash('commentForm')[0] || { _id: null, form: {} };
   var commentError = req.flash('commentError')[0] || { _id: null, parentComment: null, errors: {} };
 
-  Promise.all([Board.findOne({ _id: req.params.id }).populate({ path: 'author', select: 'nickname' }), Comment.find({ board: req.params.id }).sort('createdAt').populate({ path: 'author', select: 'nickname' })])
+  Promise.all([
+    Board.findOne({ _id: req.params.id })
+      .populate({ path: 'author', select: 'nickname' })
+      .populate({ path: 'attachment', match: { isDeleted: false } }),
+    Comment.find({ board: req.params.id }).sort('createdAt').populate({ path: 'author', select: 'nickname' }),
+  ])
     .then(([board, comments]) => {
       board.views++;
       board.save();

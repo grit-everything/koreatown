@@ -8,6 +8,7 @@ var boardSchema = mongoose.Schema({
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'user', require: true },
   views: { type: Number, default: 0 },
   numId: { type: Number },
+  attachment: { type: mongoose.Schema.ObjectId, ref: 'file' },
   createdAt: { type: Date, default: Date.now },
   updatedAte: { type: Date },
 });
