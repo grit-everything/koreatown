@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var multer = require('multer');
-var upload = multer({ dest: 'uploadedFiles' });
+var upload = multer({ dest: 'uploadedFiles/' });
 var Board = require('../models/Board');
 var Comment = require('../models/Comment');
 var User = require('../models/User');

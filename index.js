@@ -55,6 +55,7 @@ app.use('/discount', require('./routes/discount')); //! 할인정보
 app.use('/boards', util.getPostQueryString, require('./routes/boards')); //! 자유게시판
 app.use('/users', require('./routes/users'));
 app.use('/comments', util.getPostQueryString, require('./routes/comments'));
+app.use('/files', require('./routes/files'));
 
 app.listen(process.env.PORT || 5000, () => {
   if (process.env.PORT) {
